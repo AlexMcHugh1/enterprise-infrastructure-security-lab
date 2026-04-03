@@ -1,4 +1,4 @@
-# Homelab Network Infrastructure
+# Enterprise Infrastructue Security Lab
 
 A production-grade homelab running five isolated VLANs, a two-node bare-metal RKE2 Kubernetes cluster, and a dedicated kubeadm cluster for security research. Built around a **Protectli FW4C** running **pfSense CE** and a **Cisco WS-C2960S-24TS-L** managed switch. External access is zero-trust via Cloudflare Tunnel — no inbound firewall ports exposed. Every configuration is documented and version-controlled in this repository.
 
