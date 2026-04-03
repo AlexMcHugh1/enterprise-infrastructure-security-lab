@@ -1,4 +1,4 @@
-# Enterprise Infrastructue Security Lab
+# Enterprise Infrastructure Security Lab
 
 A production-grade homelab running five isolated VLANs, a two-node bare-metal RKE2 Kubernetes cluster, and a dedicated kubeadm cluster for security research. Built around a **Protectli FW4C** running **pfSense CE** and a **Cisco WS-C2960S-24TS-L** managed switch. External access is zero-trust via Cloudflare Tunnel — no inbound firewall ports exposed. Every configuration is documented and version-controlled in this repository.
 
@@ -105,7 +105,7 @@ All inter-VLAN routing is enforced by pfSense firewall rules. VLANs 20, 30, and 
 | File | Description |
 |------|-------------|
 | `01_rack_plan_and_inventory.md` | Rack elevation and full hardware inventory |
-| `02_physical_topology.md` | Physical cabling layout and logical topology |
+| `02_physical_topology.md` | Device-to-VLAN assignment and logical topology diagram |
 | `03_network_design.md` | VLAN plan, subnets, IP addressing, and routing policy |
 | `04_switch_configuration.md` | Cisco WS-C2960S trunk and access port reference config |
 | `05_pfsense_configuration.md` | pfSense VLAN interfaces, DHCP, and firewall rules |
