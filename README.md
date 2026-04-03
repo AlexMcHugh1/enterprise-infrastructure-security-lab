@@ -104,7 +104,7 @@ All inter-VLAN routing is enforced by pfSense firewall rules. VLANs 20, 30, and 
 
 | File | Description |
 |------|-------------|
-| `01_rack_plan_and_inventory.md` | Rack elevation and full hardware inventory |
+| `01_hardware_inventory.md` | Full hardware inventory with roles and OS |
 | `02_physical_topology.md` | Device-to-VLAN assignment and logical topology diagram |
 | `03_network_design.md` | VLAN plan, subnets, IP addressing, and routing policy |
 | `04_switch_configuration.md` | Cisco WS-C2960S trunk and access port reference config |
