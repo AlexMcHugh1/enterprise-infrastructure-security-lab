@@ -1,10 +1,21 @@
 # Homelab Network Infrastructure
 
-A production-grade homelab built around a **Protectli FW4C** running **pfSense CE** and a **Cisco WS-C2960S-24TS-L** managed switch. The network runs five isolated VLANs, a two-node RKE2 Kubernetes cluster on bare metal, a dedicated kubeadm cluster for security research, and zero-trust external access via Cloudflare Tunnel. Every configuration is version-controlled here.
+A production-grade homelab running five isolated VLANs, a two-node bare-metal RKE2 Kubernetes cluster, and a dedicated kubeadm cluster for security research. Built around a **Protectli FW4C** running **pfSense CE** and a **Cisco WS-C2960S-24TS-L** managed switch. External access is zero-trust via Cloudflare Tunnel — no inbound firewall ports exposed. Every configuration is documented and version-controlled in this repository.
 
 > **Note:** IP addresses throughout this documentation use RFC 5737 reserved ranges for illustration. Live addressing is not published in this repository.
 
 ---
+
+## Design Principles
+
+- **Default deny.** All inter-VLAN traffic is blocked unless explicitly permitted by pfSense firewall rules. There is no implicit trust between network segments.
+- **No inbound attack surface.** The WAN interface has zero open ports. External access to cluster services runs exclusively via Cloudflare Tunnel — an outbound-only encrypted connection. An attacker scanning the WAN IP finds nothing to target.
+- **Least-privilege segmentation.** Each device lives on the least-privileged VLAN its function requires. IoT devices cannot reach lab servers. Lab servers cannot reach the admin network. Security research workloads run on a physically separate cluster with no path to production.
+- **Management plane isolation.** Switch management and pfSense GUI are reachable only from VLAN 10. A compromised lab host cannot pivot to reconfigure network infrastructure.
+- **Configuration as code.** The intended state of the network is always explicit, version-controlled, and reviewable. Drift from the documented state is detectable.
+
+---
+
 
 ## Hardware Overview
 
@@ -99,3 +110,6 @@ All inter-VLAN routing is enforced by pfSense firewall rules. VLANs 20, 30, and 
 | `04_switch_configuration.md` | Cisco WS-C2960S trunk and access port reference config |
 | `05_pfsense_configuration.md` | pfSense VLAN interfaces, DHCP, and firewall rules |
 | `06_testing_and_verification.md` | Connectivity, isolation, and cluster health verification |
+| `07_security_architecture.md` | Threat model, trust zones, and defence-in-depth rationale |
+| `08_monitoring_and_logging.md` | Logging architecture, monitored events, and alert policy |
+| `09_runbooks.md` | Operational procedures for provisioning, incidents, and maintenance |
