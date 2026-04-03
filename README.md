@@ -6,12 +6,6 @@ A production-grade homelab built around a **Protectli FW4C** running **pfSense C
 
 ---
 
-## Lab Photo
-
-![Home Lab Photograph](home-lab-photograph.JPG)
-
----
-
 ## Hardware Overview
 
 | Device | Role | OS |
