@@ -1,95 +1,88 @@
 # Rack Plan & Inventory
 
-This document provides a clear, reproducible plan of the 12U wall rack plus a complete inventory with roles, power, and networking notes.
+This document records the physical rack layout and full hardware inventory for the homelab. The rack is a 12U wall-mount unit. All configurations are version-controlled in this repository.
 
 ---
 
 ## Rack Elevation (Front View)
 
-> Top-to-bottom. "U" positions are approximate based on current layout.
+> Top-to-bottom. U positions reflect current physical layout.
 
 ```
 U12 ┌────────────────────────────────────────────────────────┐
     │  24-Port Patch Panel (Cat6)                            │
 U11 ├────────────────────────────────────────────────────────┤
-    │  Cable Brush / Cable Manager                           │
+    │  Cable Manager / Brush Panel                           │
 U10 ├────────────────────────────────────────────────────────┤
-    │  1U Fan Shelf (exhaust)                                │
-U09 ├────────────────────────────────────────────────────────┤
     │  Cisco WS-C2960S-24TS-L (Managed Switch)               │
+U09 ├────────────────────────────────────────────────────────┤
+    │  Dell PowerEdge R220                                   │
 U08 ├────────────────────────────────────────────────────────┤
-    │                                                        │
+    │  Dell PowerEdge R410                           (2U)    │
 U07 ├────────────────────────────────────────────────────────┤
-    │  Protectli FW4C, Bosgame Mini PC, Raspberry Pi (shelf) │
+    │  (R410 continued)                                      │
 U06 ├────────────────────────────────────────────────────────┤
-    │  Spare shelf                                           │
+    │  1U Fan Shelf (exhaust)                                │
 U05 ├────────────────────────────────────────────────────────┤
-    │                                                        │
+    │  Front-mount PDU                                       │
 U04 ├────────────────────────────────────────────────────────┤
-    │  Front-mount PDU / Power Bar                           │
+    │  Shelf — Protectli FW4C / Bosgame Mini PC              │
 U03 ├────────────────────────────────────────────────────────┤
-    │                                                        │
+    │  Dell OptiPlex + Storage                               │
 U02 ├────────────────────────────────────────────────────────┤
-    │  Dell OptiPlex PC | SATA Dock (8TB HDD + 2TB HDD)      │
+    │                                                        │
 U01 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Cable & Power Notes
+## Hardware Inventory
 
-- **Patch panel** terminates all ethernet runs from devices, including those external from the rack; short ~0.3m patch leads to the switch for clean dressing.
-- **Trunk** from Protectli LAN → Switch Gi1/0/1 carries VLANs **10,20,30,40,99** (native **10**).
-- **WAN** from ISP/home router to Protectli **WAN** via Patch Port 1.
-- **TP-Link EAP653** (AX3000 Wi-Fi 6) connected to **Patch Port 8 → Gi1/0/7**, powered by **passive PoE+ injector**.
-- **PDU** powers switch, Protectli, Bosgame, SATA dock, fan shelf; all adapters labeled.
-- **Airflow:** Fan shelf set to exhaust; leave gap if thermals increase.
-
----
-
-## Rack & Network Inventory
-
-| Item | Make / Model | Role | Mount / U | Power | Network | Notes |
-|------|---------------|------|-----------|--------|----------|-------|
-| Patch Panel | 24-port Cat6 | Front termination | U12 | — | — | Top of rack |
-| Cable Manager | Brush panel | Cable hygiene | U11 | — | — | Below patch panel |
-| Fan Shelf | 1U | Cooling / airflow | U10 | IEC to PDU | — | Exhaust out |
-| Managed Switch | Cisco WS-C2960S-24TS-L | L2 switching, VLANs | U09 | IEC C13 to PDU | 24×1G (no PoE) | Trunk on Gi1/0/1 to pfSense |
-| Firewall | Protectli FW4C | pfSense CE router/firewall | U07 (shelf) | 12V DC to PDU | 4×1G (igc0–igc3) | WAN→Home router; LAN trunk→Switch |
-| Bosgame Mini PC | Ryzen 7 5825U / 32GB / 1TB NVMe | Lab server / Proxmox | U07 (shelf) | 19V DC to PDU | 1×1G | VLAN 40 (Lab) |
-| Raspberry Pi 5 | 8GB | Lab node / controllers | U07 (shelf) | USB-C to PDU | 1×1G | VLAN 40 (Lab) |
-| Spare Shelf | — | Future expansion | U06 | — | — | Currently empty |
-| PDU | Front-mount PDU | Power distribution | U04 | Mains | — | Feeds all gear |
-| Dell OptiPlex | — | File storage / SIEM node | U02 (with dock) | Mains | 1×1G | VLAN 10 (Trusted) |
-| SATA Dock | 2-bay USB (8TB + 2TB HDD) | Bulk storage | U02 (with Dell) | 12V DC to PDU | USB→Bosgame | Media/backup |
-| TP-Link EAP653 | AX3000 Dual-Band Wi-Fi 6 AP | Wireless IoT network | External | Passive PoE+ injector | VLAN 20 | Managed by Omada Controller |
-| ISP Router | *(Home router)* | Internet uplink | External | Mains | 4×LAN | Provides DHCP to pfSense WAN |
+| Item | Make / Model | Role | Mount | OS / Firmware |
+|------|--------------|------|-------|---------------|
+| Patch Panel | 24-port Cat6 | Cable termination | U12 | — |
+| Cable Manager | Brush panel | Cable hygiene | U11 | — |
+| Managed Switch | Cisco WS-C2960S-24TS-L | L2 switching, VLAN segmentation | U10 | IOS 15.x |
+| Server | Dell PowerEdge R220 (32 GB RAM) | RKE2 worker node | U09 | Rocky Linux |
+| Server | Dell PowerEdge R410 (128 GB RAM) | Dedicated kubeadm cluster — security research | U08–U07 | Rocky Linux |
+| Fan Shelf | 1U fan tray | Active cooling / airflow | U06 | — |
+| PDU | Front-mount PDU | Power distribution | U05 | — |
+| Firewall | Protectli FW4C | pfSense CE — router, firewall, VLAN termination | U04 (shelf) | pfSense CE |
+| Mini PC | Bosgame (Ryzen 7 5825U, 32 GB RAM, 1 TB NVMe) | RKE2 control plane | U04 (shelf) | Rocky Linux |
+| Desktop | Dell OptiPlex | File storage and media server | U03 | Ubuntu Server |
+| SATA Dock | 2-bay USB | Bulk storage (8 TB + 2 TB HDD) | U03 (with OptiPlex) | — |
+| AP | TP-Link EAP653 (AX3000, Wi-Fi 6) | Wireless — VLAN 20 (IoT), isolated | External | Omada |
+| Workstation | Desktop PC | Admin workstation | External (desk) | Arch Linux |
+| Laptop | ThinkPad | Pentesting and security research | External | Arch Linux |
+| ISP Router | Home router | Internet uplink | External | — |
 
 ---
 
-## Patch Panel → Switch Mapping
+## Power & Cabling Notes
 
-| Patch Port | Connected Device | Switch Port | VLAN | Notes |
-|-------------|------------------|--------------|-------|-------|
-| 1 | WAN (ISP Router) | — | WAN | Internet uplink |
-| 2 | Protectli LAN | Gi1/0/1 | Trunk | VLANs 10,20,30,40,99 |
-| 3 | Bosgame Mini PC | Gi1/0/2 | VLAN 40 | Lab server |
-| 4 | Raspberry Pi 5 | Gi1/0/3 | VLAN 40 | Lab node |
-| 5 | Dell OptiPlex | Gi1/0/4 | VLAN 10 | Trusted |
-| 6 | Desktop PC | Gi1/0/5 | VLAN 10 | Admin desktop |
-| 7 | ThinkPad (Kali) | Gi1/0/6 | VLAN 40 | Pentesting laptop |
-| 8 | TP-Link EAP653 | Gi1/0/7 | VLAN 20 | Wi-Fi AP (IoT network) |
+- **PDU** feeds the switch, Protectli, Bosgame, both PowerEdge servers, SATA dock, and fan shelf. All adapters labeled.
+- **Trunk** from Protectli LAN → Switch carries VLANs 10, 20, 30, 40, 99 via 802.1Q.
+- **WAN** uplink runs from ISP router to Protectli WAN port via patch panel.
+- **TP-Link EAP653** connects to the switch via patch panel, powered by a passive PoE+ injector; assigned to VLAN 20.
+- **Airflow:** Fan shelf set to exhaust. R410 and R220 use internal fans; leave gap between dense rack units.
+- **All patch leads** are labeled at both ends. Short (~0.3 m) leads from patch panel to switch for clean dressing.
 
 ---
 
-## Quick Logical Overview
+## Logical Role Summary
 
 ```
-[ISP Router] → [Protectli WAN]
-[Protectli LAN] → [Cisco Gi1/0/1 Trunk]
-          ↓
-   VLAN10 → Trusted PCs & NAS
-   VLAN20 → IoT + EAP653 Wi-Fi
-   VLAN40 → Lab (Bosgame, Pi, Kali)
-   VLAN99 → Management (Switch)
+[ISP Router] ──WAN──► [Protectli FW4C — pfSense]
+                              │ 802.1Q Trunk
+                       [Cisco WS-C2960S]
+                              │
+              ┌───────────────┼──────────────────┐
+              │               │                  │
+         VLAN 10          VLAN 40            VLAN 20
+         Trusted          Lab / K8s          IoT / Wi-Fi
+         ─────────        ─────────────      ───────────
+         Desktop PC       Bosgame (CP)       EAP653 AP
+         OptiPlex         R220 (worker)
+                          R410 (security)
+                          ThinkPad (pentest)
 ```
